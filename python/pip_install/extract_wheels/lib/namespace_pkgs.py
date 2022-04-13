@@ -73,16 +73,17 @@ def add_pkgutil_style_namespace_pkg_init(dir_path: Path) -> None:
     if os.path.isfile(ns_pkg_init_filepath):
         raise ValueError("%s already contains an __init__.py file." % dir_path)
 
-    with open(ns_pkg_init_filepath, "w") as ns_pkg_init_f:
-        # See https://packaging.python.org/guides/packaging-namespace-packages/#pkgutil-style-namespace-packages
-        ns_pkg_init_f.write(
-            textwrap.dedent(
-                """\
-                # __path__ manipulation added by bazelbuild/rules_python to support namespace pkgs.
-                __path__ = __import__('pkgutil').extend_path(__path__, __name__)
-                """
+    if 'kfp' not in dir_path:
+        with open(ns_pkg_init_filepath, "w") as ns_pkg_init_f:
+            # See https://packaging.python.org/guides/packaging-namespace-packages/#pkgutil-style-namespace-packages
+            ns_pkg_init_f.write(
+                textwrap.dedent(
+                    """\
+                    # __path__ manipulation added by bazelbuild/rules_python to support namespace pkgs.
+                    __path__ = __import__('pkgutil').extend_path(__path__, __name__)
+                    """
+                )
             )
-        )
 
 
 def _includes_python_modules(files: List[str]) -> bool:
