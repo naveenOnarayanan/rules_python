@@ -97,7 +97,10 @@ def _python_repository_impl(rctx):
 
     # Make the Python installation read-only.
     if "windows" not in rctx.os.name:
-        exec_result = rctx.execute(["chmod", "-R", "ugo-w", "lib"])
+        chmod_name = "chmod"
+        if "linux" not in rctx.os.name:
+            chmod_name = "/bin/chmod"
+        exec_result = rctx.execute([chmod_name, "-R", "ugo-w", "lib"])
         if exec_result.return_code:
             fail(exec_result.stderr)
 
